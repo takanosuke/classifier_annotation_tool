@@ -7,7 +7,7 @@ import json
 # 設定項目
 images_dir = ".\\images" # 画像フォルダのパス
 json_path  = ".\\result.json" # 出力(json)ファイルのパス
-classes = ["犬","猫","鳥","猿","羊","狼","不明","不明"] # 分類するクラス
+classes = ["犬","猫","鳥","猿","羊","狼","狸","不明"] # 分類するクラス
 image_width = 800 # 表示画像の幅
 image_height = 450 # 表示画像の高さ
 #----------------------------------------------------------------------
@@ -24,6 +24,7 @@ class MainWindow():
         self.images_list = os.listdir(self.images_dir)
         self.images_num = len(self.images_list)
         self.img = []
+        self.kyboard_str = "123456789qwertyuiopasdfghjklzxcvbnm"
         self.init_window()
         self.init_shortcuts()
     #----------------
@@ -46,7 +47,8 @@ class MainWindow():
         # クラスを決定するボタン
         self.button_class = []
         for i, c in enumerate(self.classes):
-            self.button_class.append(Button(self.main, text="{} ({})".format(c,i+1), command=self.labeling(class_num=i), width=10))
+            key = self.kyboard_str[i] if i < 35 else ""
+            self.button_class.append(Button(self.main, text="{} ({})".format(c,key), command=self.labeling(class_num=i), width=10))
             self.button_class[i].grid(row=(i//7)+3, column=i%7, padx=5, pady=10, sticky='nsew')
         # ラベルの内容の初期化
         self.message_image_index = StringVar()
@@ -66,7 +68,8 @@ class MainWindow():
         self.main.bind('<Key-Right>', self.onNextButton)
         self.main.bind('<Key-Left>', self.onBackButton)
         for i in list(range(len(self.button_class))):
-            self.main.bind("<Key-{}>".format(i+1), self.labeling(i))
+            if i < 35:
+                self.main.bind("<Key-{}>".format(self.kyboard_str[i]), self.labeling(i))
     def set_message(self):
         self.message_image_index.set("{}/{}".format(str(self.current_image_num+1),str(self.images_num)))
         self.message_image_class.set("{}".format(self.get_class_name(self.images_list[self.current_image_num])))
